@@ -7,7 +7,6 @@
 #include <cstdlib>
 #include "src/Utils.hpp"
 
-
 int main() {   
 	vector<Cell0D> cell0Ds;
     vector<Cell1D> cell1Ds;
