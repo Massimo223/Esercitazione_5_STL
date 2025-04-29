@@ -82,12 +82,11 @@ int main() {
         }
 		cell2Ds.push_back(cell_2);
     };
-	verifica_marker(cell0Ds,cell1Ds,cell2Ds);
 	verifica_lato(cell1Ds, cell0Ds);
 	verifica_area_poligoni(cell2Ds, cell0Ds);
-	    PolygonalMesh mesh;
+	PolygonalMesh mesh;
 
-    if (!ImportMesh(mesh))
+    if(!ImportMesh(mesh))
     {
         cerr << "file not found" << endl;
         return 1;
@@ -102,8 +101,8 @@ int main() {
         cell0Ds_properties[0].NumComponents = 1;
 
         vector<double> cell0Ds_marker(mesh.NumCell0Ds, 0.0);
-        for (const auto& m : mesh.MarkerCell0Ds)
-            for (const unsigned int id : m.second)
+        for(const auto &m : mesh.MarkerCell0Ds)
+            for(const unsigned int id: m.second)
                 cell0Ds_marker.at(id) = m.first;
 
         cell0Ds_properties[0].Data = cell0Ds_marker.data();
@@ -114,6 +113,7 @@ int main() {
     }
 
     {
+
         vector<Gedim::UCDProperty<double>> cell1Ds_properties(1);
 
         cell1Ds_properties[0].Label = "Marker";
@@ -121,39 +121,38 @@ int main() {
         cell1Ds_properties[0].NumComponents = 1;
 
         vector<double> cell1Ds_marker(mesh.NumCell1Ds, 0.0);
-        for (const auto& m : mesh.MarkerCell1Ds)
-            for (const unsigned int id : m.second)
+        for(const auto &m : mesh.MarkerCell1Ds)
+            for(const unsigned int id: m.second)
                 cell1Ds_marker.at(id) = m.first;
 
         cell1Ds_properties[0].Data = cell1Ds_marker.data();
 
-		utilities.ExportSegments("./Cell1Ds.inp",
-								mesh.Cell0DsCoordinates,
-								mesh.Cell1DsExtrema,
-								{},
-								cell1Ds_properties);
-
-    }
-
-    {
-        vector<Gedim::UCDProperty<double>> cell2Ds_properties(1);
-
-        cell2Ds_properties[0].Label = "Marker";
-        cell2Ds_properties[0].UnitLabel = "-";
-        cell2Ds_properties[0].NumComponents = 1;
-
-        vector<double> cell2Ds_marker(mesh.NumCell2Ds, 0.0);
-        for (const auto& m : mesh.MarkerCell2Ds)
-            for (const unsigned int id : m.second)
-                cell2Ds_marker.at(id) = m.first;
-
-        cell2Ds_properties[0].Data = cell2Ds_marker.data();
-
-        utilities.ExportPolygons("./Cell2Ds.inp",
+        utilities.ExportSegments("./Cell1Ds.inp",
                                  mesh.Cell0DsCoordinates,
-                                 mesh.Cell2DsVertices,
+                                 mesh.Cell1DsExtrema,
                                  {},
-                                 cell2Ds_properties);
+                                 cell1Ds_properties);
     }
+	{
+    vector<Gedim::UCDProperty<double>> cell2Ds_properties(1);
+
+    cell2Ds_properties[0].Label = "Marker";
+    cell2Ds_properties[0].UnitLabel = "-";
+    cell2Ds_properties[0].NumComponents = 1;
+
+    vector<double> cell2Ds_marker(mesh.NumCell2Ds, 0.0);
+    for(const auto &m : mesh.MarkerCell2Ds)
+        for(const unsigned int id: m.second)
+            cell2Ds_marker.at(id) = m.first;
+
+    cell2Ds_properties[0].Data = cell2Ds_marker.data();
+
+    utilities.ExportPolygons("./Cell2Ds.inp",
+                             mesh.Cell0DsCoordinates,
+                             mesh.Cell2DsVertices,
+                             {},
+                             cell2Ds_properties);
+}
+
     return 0;
 }

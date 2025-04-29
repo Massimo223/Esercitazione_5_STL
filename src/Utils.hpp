@@ -28,8 +28,6 @@ public:
 
 double area_del_poligono (const vector<Cell0D>& vertici, const Cell2D& poligono);
 
-void verifica_marker(const vector<Cell0D>& cell0Ds, const vector<Cell1D>& cell1Ds, const vector<Cell2D>& cell2Ds);
-
 void verifica_lato(const vector<Cell1D>& cell1Ds, const vector<Cell0D>& cell0Ds);
 
 void verifica_area_poligoni(const vector<Cell2D>& cell2Ds, const vector<Cell0D>& cell0Ds);

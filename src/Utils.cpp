@@ -22,45 +22,18 @@ double area_del_poligono (const vector<Cell0D>& vertici, const Cell2D& poligono)
 
 // Funzioni per verificare le varie condizioni
 
-void verifica_marker(const vector<Cell0D>& cell0Ds, const vector<Cell1D>& cell1Ds, const vector<Cell2D>& cell2Ds) {
-    for (const auto& cell0D : cell0Ds) {
-        if (cell0D.Marker < 0) {
-            cout << "C'è un errore: il marker della Cell0D con ID " << cell0D.Id << " è negativo" << endl;
-        }
-		else {
-			cout << "Il marker con ID " << cell0D.Id << " è OK" << endl;
-		}
-    }
-    for (const auto& cell1D : cell1Ds) {
-        if (cell1D.Marker < 0) {
-            cout << "C'è un errore: il marker della Cell1D con ID " << cell1D.Id << " è negativo" << endl;
-        }
-		else {
-			cout << "Il marker con ID " << cell1D.Id << " è OK" << endl;
-		}
-    }
-    for (const auto& cell2D : cell2Ds) {
-        if (cell2D.Marker < 0) {
-            cout << "C'è un errore: il marker della Cell2D con ID " << cell2D.Id << " è negativo" << endl;
-        }
-		else {
-			cout << "Il marker con ID " << cell2D.Id << " è OK" << endl;
-		}
-    }
-}
-
 void verifica_lato(const vector<Cell1D>& cell1Ds, const vector<Cell0D>& cell0Ds) {
 	for (const auto& cell1D : cell1Ds) {
 		Cell0D origine = cell0Ds[cell1D.Origin];
 		Cell0D fine = cell0Ds[cell1D.End];
         
-		double lunghezza = distanza_tra_due_punti(origine.X, fine.X, origine.Y, fine.Y); // Funzione implementata in Utils.cpp
+		double lunghezza = distanza_tra_due_punti(origine.X, origine.Y, fine.X, fine.Y); // Funzione implementata in Utils.cpp
 		
 		if (lunghezza <= 0) {
-			cout << "C'è un errore: il lato con ID " << cell1D.Id << " ha lunghezza zero oppure negativa" << endl;
+			cout << "C'è un errore: il lato con ID " << cell1D.Id + 1 << " ha lunghezza zero oppure negativa" << endl;
 		} 
 		else {
-			cout << "Il lato con ID " << cell1D.Id << " ha lunghezza " << lunghezza << endl;
+			cout << "Il lato con ID " << cell1D.Id + 1 << " ha lunghezza " << lunghezza << endl;
 		}
 	}
 }
@@ -71,14 +44,16 @@ void verifica_area_poligoni(const vector<Cell2D>& cell2Ds, const vector<Cell0D>&
         double area = area_del_poligono(cell0Ds, poligono);
 
         if (area <= 0) {
-            cout << "Errore: il poligono con ID " << poligono.Id << " ha area zero o negativa" << endl;
+            cout << "Errore: il poligono con ID " << poligono.Id + 1 << " ha area zero o negativa" << endl;
         } else {
-            cout << "Il poligono con ID " << poligono.Id << " ha area " << area << endl;
+            cout << "Il poligono con ID " << poligono.Id + 1 << " ha area " << area << endl;
         }
     }
 }
+
 #include <fstream>
 #include <sstream>
+#include <Eigen/Dense>
 
 namespace PolygonalLibrary
 {
@@ -147,6 +122,7 @@ bool ImportCell0Ds(PolygonalMesh& mesh)
             }
             else
             {
+
                 it->second.push_back(id);
             }
         }
@@ -247,8 +223,8 @@ bool ImportCell2Ds(PolygonalMesh& mesh)
     {
         istringstream converter(line);
 
-        unsigned int id, numVertices, numEdges;
-        converter >> id >> numVertices;
+        unsigned int id, marker, numVertices, numEdges;
+        converter >> id >> marker >> numVertices;
 
         array<unsigned int, 8> vertices = {}; // max 8 vertici
         for (unsigned int i = 0; i < numVertices; ++i)
@@ -259,10 +235,9 @@ bool ImportCell2Ds(PolygonalMesh& mesh)
         for (unsigned int i = 0; i < numEdges; ++i)
             converter >> edges[i];
 
-        mesh.Cell2DsId.push_back(id);
-		mesh.Cell2DsVertices.push_back(std::vector<unsigned int>(vertices.begin(), vertices.end()));
-		mesh.Cell2DsEdges.push_back(std::vector<unsigned int>(edges.begin(), edges.end()));
-
+        mesh.Cell2DsId.push_back(id);	
+		mesh.Cell2DsVertices.push_back(std::vector<unsigned int>(vertices.begin(), vertices.begin() + numVertices));
+		mesh.Cell2DsEdges.push_back(std::vector<unsigned int>(edges.begin(), edges.begin() + numEdges));
     }
 
     return true;
